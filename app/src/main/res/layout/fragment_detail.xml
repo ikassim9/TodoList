@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".DetailFragment">
 
-    <TextView
-        android:id="@+id/tv_time_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
-        android:drawableStart="@drawable/ic_time_picker"
-        android:drawablePadding="15dp"
-        android:hint="No time specify"
-        android:padding="20sp"
-        android:textSize="27sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
 
     <EditText
         android:id="@+id/edtTaskName"
@@ -43,7 +29,22 @@
         android:layout_marginTop="40dp"
         android:drawableStart="@drawable/ic_calender"
         android:drawablePadding="15dp"
-        android:hint="No due date specfiy"
+        android:hint="No due date specify"
+        android:padding="20sp"
+        android:textSize="27sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
+
+    <TextView
+        android:id="@+id/tv_time_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="156dp"
+        android:drawableStart="@drawable/ic_time_picker"
+        android:drawablePadding="15dp"
+        android:hint="No time specify"
         android:padding="20sp"
         android:textSize="27sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,4 +53,31 @@
         app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
 
 
+    <TextView
+        android:id="@+id/tv_notification_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="264dp"
+        android:drawableStart="@drawable/ic_reminder_off"
+        android:drawablePadding="15dp"
+        android:hint="Notification off"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="20sp"
+        android:textSize="27sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtTaskName"
+        app:layout_constraintVertical_bias="0.051" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+    
