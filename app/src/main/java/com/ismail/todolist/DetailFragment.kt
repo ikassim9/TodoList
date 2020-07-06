@@ -17,6 +17,7 @@ import java.util.*
 import kotlin.math.min
 
 class DetailFragment : Fragment() {
+    private lateinit var notifcationStatus: TextView
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var now: Calendar
     private lateinit var calender: TextView
@@ -31,6 +32,7 @@ class DetailFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         now = Calendar.getInstance()
+        notifcationStatus = view.findViewById(R.id.tv_notification_status)
         calender = view.findViewById(R.id.tvCalender)
         timePicker = view.findViewById(R.id.tv_time_picker)
         calender.setOnClickListener() {
@@ -114,5 +116,18 @@ class DetailFragment : Fragment() {
         Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
 
+    }
+
+    private fun notificationStatus() {
+        notifcationStatus.setOnClickListener() {
+            Toast.makeText(requireContext(), "Notification clicked on", Toast.LENGTH_SHORT).show()
+            notification_group.visibility = View.VISIBLE
+        }
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        notificationStatus()
     }
 }
