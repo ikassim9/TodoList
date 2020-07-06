@@ -6,12 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".DetailFragment">
 
+    <TextView
+        android:id="@+id/tv_time_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
+        android:drawableStart="@drawable/ic_time_picker"
+        android:drawablePadding="15dp"
+        android:hint="No time specify"
+        android:padding="20sp"
+        android:textSize="27sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
+
     <EditText
-        android:id="@+id/textView"
+        android:id="@+id/edtTaskName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:hint="Task name"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:padding="10dp"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,16 +40,16 @@
         android:id="@+id/tvCalender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:hint="Select the due date"
-        android:textSize="27sp"
-        android:drawablePadding="15dp"
+        android:layout_marginTop="40dp"
         android:drawableStart="@drawable/ic_calender"
+        android:drawablePadding="15dp"
+        android:hint="No due date specfiy"
         android:padding="20sp"
+        android:textSize="27sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

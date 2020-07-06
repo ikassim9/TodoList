@@ -11,13 +11,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
-    private val getAllTodoItems: LiveData<List<TodoItem>>
-    private val repository: TodoRepository
+     val getAllTodoItems: LiveData<List<TodoItem>>
+     val repository: TodoRepository
 
     init {
         val todoDao = TodoDatabase.getDatabase(application).todoDao
         repository = TodoRepository(dao = todoDao)
         getAllTodoItems = repository.todoItems
+    }
 
 
         fun insertItem(todoItem: TodoItem) {
@@ -44,5 +45,4 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-}
 

@@ -12,7 +12,6 @@ data class TodoItem(
     val id: Int,
 
     @ColumnInfo(name = "item_title")
-
     val title: String
 
 
