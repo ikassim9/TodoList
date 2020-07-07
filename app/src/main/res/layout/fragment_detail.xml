@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:verticalScrollbarPosition="right"
+    tools:context=".DetailFragment">
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DetailFragment">
@@ -22,94 +27,135 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/tvCalender"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_calender"
         android:drawablePadding="15dp"
         android:hint="No due date specify"
         android:padding="20sp"
-        android:textSize="27sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
 
+
     <TextView
         android:id="@+id/tv_time_picker"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="120dp"
         android:drawableStart="@drawable/ic_time_picker"
         android:drawablePadding="15dp"
         android:hint="No time specify"
         android:padding="20sp"
-        android:textSize="27sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
 
-
     <TextView
         android:id="@+id/tv_notification_status"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="32dp"
         android:drawableStart="@drawable/ic_reminder_off"
         android:drawablePadding="15dp"
         android:hint="Notification off"
         android:padding="20sp"
-        android:textSize="27sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtTaskName" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_time_picker" />
+
 
     <TextView
         android:id="@+id/tvCustomizeReminder"
-        android:layout_width="413dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:padding="17dp"
         android:text="Customize your notification"
         android:textColor="@color/colorAccent"
-        android:textSize="27sp"
+        android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_notification_status" />
 
     <TextView
-        android:id="@+id/tvReminder"
+        android:id="@+id/tvReminderDate"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="24dp"
         android:drawableStart="@drawable/ic_reminder"
         android:drawablePadding="15dp"
-        android:hint="Remind me on..."
+        android:hint="Choose reminder date"
         android:padding="20dp"
-        android:textSize="25sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvCustomizeReminder" />
 
-
+    <TextView
+        android:id="@+id/tvReminderTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableStart="@drawable/ic_reminder"
+        android:drawablePadding="15dp"
+        android:padding="20dp"
+        android:textStyle="bold"
+        android:text="Choose reminder time"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvReminderDate" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/notification_group"
+        android:background="@color/colorPrimary"
         android:layout_width="wrap_content"
-        android:visibility="visible"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tvReminder,tvCustomizeReminder" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvReminderDate,tvCustomizeReminder , tvReminderTime" />
 
+<!--    <Spinner-->
+<!--        android:id="@+id/spinner"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="28dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.842"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
+    <Spinner
+        android:id="@+id/notification_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="264dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_notification_status"
+        app:layout_constraintLeft_toRightOf="@id/tv_notification_status"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+</ScrollView>
 
 
 

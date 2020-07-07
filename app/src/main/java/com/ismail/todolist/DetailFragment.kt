@@ -5,19 +5,21 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_detail.*
+import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
 
 class DetailFragment : Fragment() {
-    private lateinit var notifcationStatus: TextView
+    private var notificationOnOrOff  = false
+    private lateinit var toggle_notifcation : TextView
+    private lateinit var spinner: Spinner
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var now: Calendar
     private lateinit var calender: TextView
@@ -32,13 +34,12 @@ class DetailFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         now = Calendar.getInstance()
-        notifcationStatus = view.findViewById(R.id.tv_notification_status)
         calender = view.findViewById(R.id.tvCalender)
         timePicker = view.findViewById(R.id.tv_time_picker)
-        calender.setOnClickListener() {
+        calender.setOnClickListener {
             datePickerDialogue()
         }
-        timePicker.setOnClickListener() {
+        timePicker.setOnClickListener {
             timePickerDialogue()
         }
         return view
@@ -89,7 +90,7 @@ class DetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
 
     }
 
@@ -116,18 +117,43 @@ class DetailFragment : Fragment() {
         Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
 
-    }
-
-    private fun notificationStatus() {
-        notifcationStatus.setOnClickListener() {
-            Toast.makeText(requireContext(), "Notification clicked on", Toast.LENGTH_SHORT).show()
-            notification_group.visibility = View.VISIBLE
-        }
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        notificationStatus()
+        spinner = view.findViewById(R.id.notification_toggle) as Spinner
+        toggle_notifcation = view.findViewById(R.id.tv_notification_status)
+        val notification_type = arrayOf("Off", "On")
+         spinner.adapter = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            notification_type
+        )
+        //arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+       // spinner.adapter = arrayAdapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                toggle_notifcation.text = notification_type[position]
+               var selectedItem : String = notification_type[position].toString()
+                var item = selectedItem.toUpperCase()
+                notificationOnOrOff = selectedItem != "OFF"
+
+
+            }
+
+
+        }
+
+
     }
 }
