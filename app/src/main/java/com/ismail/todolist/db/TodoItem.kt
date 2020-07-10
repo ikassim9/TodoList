@@ -12,7 +12,14 @@ data class TodoItem(
     val id: Int,
 
     @ColumnInfo(name = "item_title")
-    val title: String
+    val title: String,
+
+    @ColumnInfo(name = "item_dueDate")
+    val dueDate  : String
+
+
+
+
 
 
 ) {

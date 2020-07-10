@@ -18,11 +18,11 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>(){
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(
+       return MyViewHolder(LayoutInflater.from(parent.context).inflate(
             R.layout.list_items,
-            parent, false)
+            parent, false))
 
-        return MyViewHolder(itemView)
+
     }
 
     override fun getItemCount(): Int {
@@ -32,6 +32,7 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>(){
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
       val currentItem = todoList[position]
         holder.itemView.tvTitle.text = currentItem.title
+        holder.itemView.dueDate.text = currentItem.dueDate
     }
  fun setList(todo : List<TodoItem>){
     this.todoList = todo

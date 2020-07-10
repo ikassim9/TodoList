@@ -6,18 +6,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_detail.*
-import org.w3c.dom.Text
+import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DetailFragment : Fragment() {
     private var notificationOnOrOff  = false
+    var c = Calendar.getInstance()
+
     private lateinit var toggle_notifcation : TextView
     private lateinit var spinner: Spinner
     private lateinit var todoViewModel: TodoViewModel
@@ -47,7 +48,7 @@ class DetailFragment : Fragment() {
 
     private fun datePickerDialogue() {
         val calender = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
+        var datePickerDialog = DatePickerDialog(
             requireContext(), DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 now.set(Calendar.YEAR, year)
                 now.set(Calendar.MONTH, month)
@@ -59,23 +60,32 @@ class DetailFragment : Fragment() {
             },
             now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH)
         )
-
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
         datePickerDialog.show()
 
     }
 
     private fun timePickerDialogue() {
         val timepicker = TimePickerDialog(
-            requireActivity(), TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            requireContext(), TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 now.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 now.set(Calendar.MINUTE, minute)
                 val time = timeFormat.format(now.time)
-                tv_time_picker.text = time
+                time
+                if(now.timeInMillis > c.timeInMillis) {
+                    tv_time_picker.text = time
+                }
+                else{
+                    tv_time_picker.text = null
+                    Toast.makeText(requireContext(), "Time chosen is in the past", Toast.LENGTH_SHORT).show()
+                    Log.i("past_time", "Time chosen is in past  ")
+                }
 
             },
 
             now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false
         )
+
 
         timepicker.show()
 
@@ -107,11 +117,12 @@ class DetailFragment : Fragment() {
 
     private fun saveTodoItem() {
         val taskName = edtTaskName.text.toString()
-        if (taskName.isEmpty()) {
+        val dueDate = tvCalender.text.toString()
+        if (taskName.isBlank()) {
             Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
             return
         }
-        val toDOItem = TodoItem(0, taskName)
+        val toDOItem = TodoItem(0, taskName, dueDate)
         todoViewModel.insertItem(toDOItem)
         Log.i("item_inserted", "Item is inserted -> $toDOItem ")
         Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT).show()
