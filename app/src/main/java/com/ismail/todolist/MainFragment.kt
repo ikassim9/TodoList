@@ -1,6 +1,7 @@
 package com.ismail.todolist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -33,8 +34,8 @@ class MainFragment : Fragment() {
 
         view.fabBtn.setOnClickListener() {
             findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
-            // todoViewModel.deleteAllItems()
-            Toast.makeText(requireContext(), "Navigation successful", Toast.LENGTH_SHORT).show()
+            Log.i("fab_btn", "Fab button is pressed")
+
         }
         return view
     }

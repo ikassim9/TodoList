@@ -11,17 +11,17 @@ import androidx.room.Dao
 interface TodoDao {
 
     @Insert
-    suspend fun insertItem(toDoItem: TodoItem)
+    suspend fun insertItem(toDoItem: TodoItem)  : Long
 
     @Update
-    suspend fun updateItem(toDoItem: TodoItem)
+    suspend fun updateItem(toDoItem: TodoItem) : Int
 
 
     @Delete
-    suspend fun deleteItem(toDoItem: TodoItem)
+    suspend fun deleteItem(toDoItem: TodoItem) : Int
 
     @Query("Delete from todo_table")
-    suspend fun deleteAll()
+    suspend fun deleteAll() : Int
 
     @Query("Select * from todo_table")
     fun getAllTodoItems(): LiveData<List<TodoItem>>
