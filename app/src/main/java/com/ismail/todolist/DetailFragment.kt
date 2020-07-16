@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.item_list.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,16 +24,18 @@ class DetailFragment : Fragment() {
     private lateinit var toggle_notifcation: TextView
     private lateinit var spinner: Spinner
     private lateinit var todoViewModel: TodoViewModel
+    private lateinit var detailArgs: DetailFragmentArgs
     private lateinit var now: Calendar
     private lateinit var calender: TextView
     private lateinit var timePicker: TextView
+    private lateinit var checkDone: CheckBox
     private val dateFormat = SimpleDateFormat("EEEE MMM dd", Locale.US)
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
+    private var hasArgument: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         now = Calendar.getInstance()
@@ -128,95 +131,74 @@ class DetailFragment : Fragment() {
             if (item != null) {
                 todoViewModel.updateItem(item)
                 Log.i("updated_item", "$item")
+                Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
+
+
+            } else {
+                val taskName = edtTaskName.text.toString()
+                val due = tvCalender.text.toString()
+                if (taskName.isBlank()) {
+                    Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val toDOItem = TodoItem(0, taskName, dueDate)
+                todoViewModel.insertItem(toDOItem)
+                Log.i("item_inserted", "Item is inserted -> $toDOItem ")
+                findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
+                Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT)
+                    .show()
             }
-            findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-            Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
-
-        }
-        if(arguments == null) {
-            Log.i("argumetn_null", "argument is null")
-            val taskName = edtTaskName.text.toString()
-            val dueDate = tvCalender.text.toString()
-            val toDOItem = TodoItem(0, taskName, dueDate)
-            todoViewModel.insertItem(toDOItem)
-            Log.i("item_inserted", "Item is inserted -> $toDOItem ")
-            findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-            Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT)
-                .show()
-        }
-        }
-
-
-
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    //  retrieveArgument(view)
-    view.edtTaskName.setText(args.item?.title)
-    view.tvCalender.text = args.item?.dueDate
-    spinner = view.findViewById(R.id.notification_toggle) as Spinner
-    toggle_notifcation = view.findViewById(R.id.tv_notification_status)
-    val notification_type = arrayOf("Off", "On")
-    spinner.adapter = ArrayAdapter<String>(
-        requireContext(),
-        android.R.layout.simple_spinner_item,
-        notification_type
-    )
-    //arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    // spinner.adapter = arrayAdapter
-    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-
-        }
-
-        override fun onItemSelected(
-            parent: AdapterView<*>?,
-            view: View?,
-            position: Int,
-            id: Long
-        ) {
-            toggle_notifcation.text = notification_type[position]
-            var selectedItem: String = notification_type[position].toString()
-            var item = selectedItem.toUpperCase()
-            notificationOnOrOff = selectedItem != "OFF"
         }
     }
-}
 
-//    private fun retrieveArgument() {
-//        if (arguments != null) {
-//            val detailFragmentArgs = DetailFragmentArgs.fromBundle(requireArguments())
-//            edtTaskName.setText(detailFragmentArgs.item?.title)
-//            tvCalender.text = detailFragmentArgs.item?.dueDate
-//            val name = edtTaskName.text.toString()
-//            val dueDate = tvCalender.text.toString()
-//            val item = TodoItem(detailFragmentArgs.item!!.id, name, dueDate)
-//            todoViewModel.updateItem(item)
-//            findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-//            Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
-//
-//
-//        } else {
-//            val taskName = edtTaskName.text.toString()
-//            val dueDate = tvCalender.text.toString()
-//            if (taskName.isBlank()) {
-//                Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
-//                return
-//            }
-//            val toDOItem = TodoItem(0, taskName, dueDate)
-//            todoViewModel.insertItem(toDOItem)
-//            Log.i("item_inserted", "Item is inserted -> $toDOItem ")
-//            Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT).show()
-//            findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-//        }
-//    }
-}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getArgs()
+//        view.edtTaskName.setText(args.item?.title)
+//        view.tvCalender.text = args.item?.dueDate
+        spinner = view.findViewById(R.id.notification_toggle) as Spinner
+        toggle_notifcation = view.findViewById(R.id.tv_notification_status)
+        val notification_type = arrayOf("Off", "On")
+        spinner.adapter = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            notification_type
+        )
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
 
+            }
 
-//if (arguments != null) {
-//  detailFragmentArgs = DetailFragmentArgs.fromBundle(requireArguments())
-//    val name = detailFragmentArgs.currentItem.title
-//    val dueDate = detailFragmentArgs.currentItem.dueDate
-//    val item = TodoItem(detailFragmentArgs.currentItem.id, name, dueDate)
-//    todoViewModel.updateItem(item)
-//    findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-//   Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                toggle_notifcation.text = notification_type[position]
+                var selectedItem: String = notification_type[position].toString()
+                var item = selectedItem.toUpperCase()
+                notificationOnOrOff = selectedItem != "OFF"
+            }
+        }
+
+    }
+
+    private fun getArgs() {
+        if (arguments != null) {
+            detailArgs = DetailFragmentArgs.fromBundle(requireArguments())
+            view?.edtTaskName?.setText(detailArgs.item?.title)
+            view?.tvCalender?.text = detailArgs.item?.dueDate
+            hasArgument = true
+
+        }
+    }
+
+    private fun checkBox() {
+        doneCheckBox.setOnClickListener() {
+            
+        }
+
+        }
+    }

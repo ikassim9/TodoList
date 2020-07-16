@@ -20,9 +20,7 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_main, container, false)
-
         val recyclerView = view.recyclerview
         val adapter = ListAdapter()
         recyclerView.adapter = adapter
@@ -30,6 +28,7 @@ class MainFragment : Fragment() {
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         todoViewModel.getAllTodoItems.observe(viewLifecycleOwner, Observer {
             adapter.setList(it)
+            Log.i("list", "$it")
         })
 
         view.fabBtn.setOnClickListener() {
