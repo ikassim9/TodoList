@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.ismail.todolist.MainFragment"
-        android:label="fragment_main"
+        android:label="Your Todos"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_detailFragment"
@@ -17,7 +17,6 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.ismail.todolist.DetailFragment"
-        android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
 
         <argument

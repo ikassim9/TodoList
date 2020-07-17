@@ -8,25 +8,37 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.item_list.view.*
-import kotlinx.android.synthetic.main.list_items.view.dueDate
-import kotlinx.android.synthetic.main.list_items.view.tvTitle
 
-class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
-    private var todoList: List<TodoItem> = ArrayList()
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+class ListAdapter(private val callback : AdapterCallBack
+
+) :
+    RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
+
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bind(todoItem: TodoItem){
+            val position = adapterPosition
+            itemView.setOnClickListener(){
+                callback.onItemClick(todoItem, position)
+            }
+            itemView.doneCheckBox.setOnClickListener(){
+                callback.onCheckBoxClick(todoItem, position)
+            }
+            itemView.setOnLongClickListener(){
+                callback.onItemLongClick(todoItem, position)
+            }
+        }
     }
 
+        private var todoList: List<TodoItem> = ArrayList()
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_list,
-                parent, false
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val context = parent.context
+        val view = LayoutInflater.from(context).inflate(
+            R.layout.item_list, parent, false
         )
-
-
+        return MyViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -37,34 +49,24 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
         val currentItem = todoList[position]
         holder.itemView.tvTitle.text = currentItem.title
         holder.itemView.dueDate.text = currentItem.dueDate
-        holder.itemView.rowLayout.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToDetailFragment(currentItem)
-            holder.itemView.findNavController().navigate(action)
-            Log.i("cardview", "Cardview is pressed")
+//        holder.itemView.rowLayout.setOnClickListener {
+//            val action = MainFragmentDirections.actionMainFragmentToDetailFragment(currentItem)
+//            holder.itemView.findNavController().navigate(action)
 
-        }
+        holder.bind(currentItem)
+
+
     }
 
     fun setList(todo: List<TodoItem>) {
         this.todoList = todo
         notifyDataSetChanged()
+
+
+
+    }
+
     }
 
 
 
-
-        }
-
-
-//    fun bind(
-//        noteItem: NoteItem,
-//        longClickListener: (NoteItem, Int) -> Boolean,
-//        clickListener: (NoteItem, Int) -> Unit
-//    ) {
-//        val position = adapterPosition
-//        itemView.title_text_view.text = noteItem.title
-//        itemView.setOnLongClickListener() {
-//            longClickListener(noteItem, position)
-//        }
-//        itemView.setOnClickListener() {
-//            clickListener(noteItem, position)

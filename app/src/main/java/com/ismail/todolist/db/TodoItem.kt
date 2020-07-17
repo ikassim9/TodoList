@@ -18,7 +18,11 @@ data class TodoItem(
     val title: String,
 
     @ColumnInfo(name = "item_dueDate")
-    val dueDate  : String
+    val dueDate  : String,
+
+    @ColumnInfo(name = "item_dueTime")
+    val dueTime : String
+
 
 
 
