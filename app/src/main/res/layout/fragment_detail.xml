@@ -50,7 +50,7 @@
         android:layout_marginTop="24dp"
         android:drawableStart="@drawable/ic_time_picker"
         android:drawablePadding="15dp"
-        android:hint="No time specify"
+        android:hint="time"
         android:padding="20sp"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -128,7 +128,7 @@
         android:background="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="tvReminderDate,tvCustomizeReminder , tvReminderTime" />
 
     <Spinner

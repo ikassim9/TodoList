@@ -9,6 +9,4 @@ interface AdapterCallBack {
 
     fun onItemClick(todoItem: TodoItem, position: Int)
 
-    fun onItemLongClick(todoItem: TodoItem, position: Int) : Boolean
-
 }

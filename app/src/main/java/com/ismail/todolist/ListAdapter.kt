@@ -18,16 +18,14 @@ class ListAdapter(private val callback : AdapterCallBack
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(todoItem: TodoItem){
-            val position = adapterPosition
+           val position = adapterPosition
             itemView.setOnClickListener(){
                 callback.onItemClick(todoItem, position)
             }
             itemView.doneCheckBox.setOnClickListener(){
                 callback.onCheckBoxClick(todoItem, position)
             }
-            itemView.setOnLongClickListener(){
-                callback.onItemLongClick(todoItem, position)
-            }
+
         }
     }
 

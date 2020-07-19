@@ -73,39 +73,23 @@ class MainFragment : Fragment(), AdapterCallBack {
 
     override fun onCheckBoxClick(todoItem: TodoItem, position: Int) {
         if (doneCheckBox.isChecked) {
-            todoViewModel.deleteItem(todoItem = todoItem)
-            Log.i("check_click", "Check box is clicked")
+            doneCheckBox.isSelected = true
+            //todoViewModel.deleteItem(todoItem)
+            Toast.makeText(requireContext(), "Check box at position $position is click!", Toast.LENGTH_SHORT).show()
+            Log.i("check_click", "$todoItem is deleted at position $position")
+        }
+        else{
+            doneCheckBox.isSelected = false
         }
     }
 
     override fun onItemClick(todoItem: TodoItem, position: Int) {
         val action = MainFragmentDirections.actionMainFragmentToDetailFragment(todoItem)
         findNavController().navigate(action)
-        Toast.makeText(requireContext(), "Navigation successful;", Toast.LENGTH_SHORT).show()
-        Log.i("cardview_click", "Card view is click")
-
-    }
-
-    override fun onItemLongClick(todoItem: TodoItem, position: Int): Boolean {
-      return deleteItem(todoItem, position)
+        Toast.makeText(requireContext(), "Navigation successful!", Toast.LENGTH_SHORT).show()
+        Log.i("cardview_click", "Card view  item $todoItem is click at position $position")
 
     }
 
 
-    private fun deleteItem(todoItem: TodoItem , position: Int): Boolean {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
-        dialogBuilder.setTitle("Delete Note")
-        dialogBuilder.setMessage("Do you want to permanently delete this note?")
-            .setCancelable(false)
-            .setPositiveButton("Yes") { dialog, id ->
-                todoViewModel.deleteItem(todoItem)
-                Toast.makeText(requireContext(), "Note deleted", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancel") { dialog, id ->
-                dialog.cancel()
-            }.show()
-        return true
-
-    }
-    }
-
+}
