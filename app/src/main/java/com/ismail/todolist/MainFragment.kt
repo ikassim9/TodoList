@@ -10,12 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.media.app.NotificationCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import kotlinx.android.synthetic.main.item_list.*
-
+import kotlinx.android.synthetic.main.item_list.view.*
 
 class MainFragment : Fragment(), AdapterCallBack {
     private lateinit var todoViewModel: TodoViewModel
@@ -37,7 +38,6 @@ class MainFragment : Fragment(), AdapterCallBack {
             adapter.setList(it)
             Log.i("list", "$it")
         })
-
         view.fabBtn.setOnClickListener() {
             findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
             (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Create"
@@ -45,7 +45,6 @@ class MainFragment : Fragment(), AdapterCallBack {
         }
         return view
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.delete_all, menu)
@@ -73,13 +72,18 @@ class MainFragment : Fragment(), AdapterCallBack {
 
     override fun onCheckBoxClick(todoItem: TodoItem, position: Int) {
         if (doneCheckBox.isChecked) {
-            doneCheckBox.isSelected = true
-            //todoViewModel.deleteItem(todoItem)
-            Toast.makeText(requireContext(), "Check box at position $position is click!", Toast.LENGTH_SHORT).show()
+            Log.i("ch", "${doneCheckBox.isChecked}")
+            doneCheckBox.isChecked = true
+            todoViewModel.deleteItem(todoItem)
+            Toast.makeText(
+                requireContext(),
+                "Check box at position $position is click!",
+                Toast.LENGTH_SHORT
+            ).show()
             Log.i("check_click", "$todoItem is deleted at position $position")
-        }
-        else{
-            doneCheckBox.isSelected = false
+        } else if (!doneCheckBox.isChecked) {
+            Log.i("not_check", "${doneCheckBox.isChecked}")
+            doneCheckBox.isChecked = false
         }
     }
 
@@ -89,7 +93,9 @@ class MainFragment : Fragment(), AdapterCallBack {
         Toast.makeText(requireContext(), "Navigation successful!", Toast.LENGTH_SHORT).show()
         Log.i("cardview_click", "Card view  item $todoItem is click at position $position")
 
+
     }
 
-
+    fun sendNotificatonReminder(view: View) {
+    }
 }

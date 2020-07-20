@@ -1,35 +1,35 @@
 package com.ismail.todolist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.item_list.view.*
 
 
-class ListAdapter(private val callback : AdapterCallBack
+class ListAdapter(
+    private val callback: AdapterCallBack
 
 ) :
     RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(todoItem: TodoItem){
-           val position = adapterPosition
-            itemView.setOnClickListener(){
+        fun bind(todoItem: TodoItem) {
+            val position = adapterPosition
+            itemView.setOnClickListener() {
                 callback.onItemClick(todoItem, position)
             }
-            itemView.doneCheckBox.setOnClickListener(){
+            itemView.doneCheckBox.setOnClickListener() {
                 callback.onCheckBoxClick(todoItem, position)
             }
+         //   itemView.doneCheckBox.isChecked = true
+
 
         }
     }
-
-        private var todoList: List<TodoItem> = ArrayList()
+    private var todoList: List<TodoItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val context = parent.context
@@ -47,11 +47,8 @@ class ListAdapter(private val callback : AdapterCallBack
         val currentItem = todoList[position]
         holder.itemView.tvTitle.text = currentItem.title
         holder.itemView.dueDate.text = currentItem.dueDate
-//        holder.itemView.rowLayout.setOnClickListener {
-//            val action = MainFragmentDirections.actionMainFragmentToDetailFragment(currentItem)
-//            holder.itemView.findNavController().navigate(action)
-
         holder.bind(currentItem)
+
 
 
     }
@@ -60,11 +57,9 @@ class ListAdapter(private val callback : AdapterCallBack
         this.todoList = todo
         notifyDataSetChanged()
 
-
-
     }
 
-    }
+}
 
 
 

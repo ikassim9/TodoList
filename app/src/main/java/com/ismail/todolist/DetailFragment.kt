@@ -54,12 +54,10 @@ class DetailFragment : Fragment() ,DatePickerDialog.OnDateSetListener, TimePicke
             TimePickerFragment().show(childFragmentManager, "Time Picker")
 
         }
-
         return view
 
 
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_item, menu)
@@ -159,7 +157,6 @@ class DetailFragment : Fragment() ,DatePickerDialog.OnDateSetListener, TimePicke
 
         }
     }
-
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         val calender = Calendar.getInstance()
