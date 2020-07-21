@@ -23,7 +23,7 @@ interface TodoDao {
     @Query("Delete from todo_table")
     suspend fun deleteAll() : Int
 
-    @Query("Select * from todo_table")
+    @Query("Select * from todo_table order by item_id desc")
     fun getAllTodoItems(): LiveData<List<TodoItem>>
 
 
