@@ -1,5 +1,6 @@
 package com.ismail.todolist
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -11,7 +12,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupActionBarWithNavController(findNavController(R.id.fragment))
-    }
+
+        }
+
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragment)

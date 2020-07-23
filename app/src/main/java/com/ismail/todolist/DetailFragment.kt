@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDeepLink
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ismail.todolist.db.TodoItem
@@ -102,7 +103,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Log.i("updated_item", "$item")
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-              //  secondNotification()
+                sendNotificationReminder()
+
+                //  secondNotification()
 
             } else {
                 val taskName = edtTaskName.text.toString()
@@ -199,8 +202,11 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun sendNotificationReminder() {
-        val fragmentIntent = Intent(activity, MainFragment::class.java)
-        val pendingIntent : PendingIntent = PendingIntent.getActivity(requireContext(), 0 ,  fragmentIntent, 0 )
+        val notificationIntent = Intent(activity, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK  or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        notificationIntent.putExtra("fragment", "mainFragment")
+        val pendingIntent : PendingIntent = PendingIntent.getActivity(requireContext(), 0 ,  notificationIntent, 0 )
         val builder =
             NotificationCompat.Builder(requireContext(), NotificationHelper.reminderchannelID)
                 .setSmallIcon(R.mipmap.ic_launcher)
