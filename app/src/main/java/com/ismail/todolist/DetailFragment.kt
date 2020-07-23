@@ -1,11 +1,16 @@
 package com.ismail.todolist
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -21,8 +26,21 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val args by navArgs<DetailFragmentArgs>()
     private var notificationOnOrOff = false
     private var c: Calendar = Calendar.getInstance()
+    private val reminderchannelID = "reminder_channel_id"
+    val reminderChannel: String = "reminderChannel"
+
+    // private lateinit var notificationManager: NotificationManagerCompat
     private lateinit var toggle_notifcation: TextView
     private lateinit var spinner: Spinner
+    private val now: Calendar = Calendar.getInstance()
+    private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
+    private val dateFormat = SimpleDateFormat("EEEE MMM dd", Locale.US)
+    private lateinit var notificationManager: NotificationManager
+    lateinit var notificationChannel: NotificationChannel
+    //  private lateinit var builder: Notification
+
+
+    // private val dateFormat = SimpleDateFormat("EEEE MMM dd", Locale.US)
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var detailArgs: DetailFragmentArgs
     private lateinit var calender: TextView
@@ -32,13 +50,15 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
+        notificationManager =
+            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         todoViewModel.date.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             tvCalender.text = it
+            Log.i("date_picker", "$it")
+
         })
-        todoViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            tv_time_picker.text = it
-        })
+
         calender = view.findViewById(R.id.tvCalender)
         timePicker = view.findViewById(R.id.tv_time_picker)
         calender.setOnClickListener {
@@ -82,6 +102,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Log.i("updated_item", "$item")
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
+              //  secondNotification()
 
             } else {
                 val taskName = edtTaskName.text.toString()
@@ -98,6 +119,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
                 Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT)
                     .show()
+                // sendNotificationReminder()
+
+                sendNotificationReminder()
             }
         }
     }
@@ -105,9 +129,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
+        //notificationManager = NotificationManagerCompat.from(requireContext())
         spinner = view.findViewById(R.id.notification_toggle) as Spinner
         toggle_notifcation = view.findViewById(R.id.tv_notification_status)
-        val notification_type = arrayOf("Off", "On")
+        val notification_type = arrayOf("Yes", "No")
         spinner.adapter = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -130,6 +155,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 notificationOnOrOff = selectedItem != "OFF"
             }
         }
+        todoViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            tv_time_picker.text = it
+            Log.i("time_picker", "$it")
+        })
     }
 
     private fun getArgs() {
@@ -142,31 +171,68 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        // val calender = Calendar.getInstance()
-        now.set(Calendar.YEAR, year)
-        now.set(Calendar.MONTH, month)
-        now.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        val date: String = dateFormat.format(now.time)
-        Log.i("calender", "${now.time}")
+        val calender = Calendar.getInstance()
+        calender.set(Calendar.YEAR, year)
+        calender.set(Calendar.MONTH, month)
+        calender.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val date: String = dateFormat.format(calender.time)
+        Log.i("date", "${calender.time}")
         // val selectedDate = dateFormat.parse(tvCalender.text.toString())
-        todoViewModel.setDateCalenderValue(date = date)
+        todoViewModel.setDateCalenderValue(date)
 
         Toast.makeText(requireContext(), "Date has been chosen", Toast.LENGTH_SHORT).show()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        // val calendar = Calendar.getInstance()
-        now.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        now.set(Calendar.MINUTE, minute)
-        val time = timeFormat.format(now.time)
-        todoViewModel.setTimePickerValue(time = time)
+        //val calendar = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        cal.set(Calendar.MINUTE, minute)
+        val time = timeFormat.format(cal.time)
+        todoViewModel.setTimePickerValue(time)
+        Log.i("time", "${cal.time}")
         Toast.makeText(requireContext(), "Time has been chosen", Toast.LENGTH_SHORT).show()
     }
+
+
     companion object {
-        val now: Calendar = Calendar.getInstance()
-        val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
-        val dateFormat = SimpleDateFormat("EEEE MMM dd", Locale.US)
-
-
+        val cal: Calendar = Calendar.getInstance()
     }
+
+    private fun sendNotificationReminder() {
+        val fragmentIntent = Intent(activity, MainFragment::class.java)
+        val pendingIntent : PendingIntent = PendingIntent.getActivity(requireContext(), 0 ,  fragmentIntent, 0 )
+        val builder =
+            NotificationCompat.Builder(requireContext(), NotificationHelper.reminderchannelID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("First notification!")
+                .setContentText("This is the first notification :) ")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                //.setCategory(NotificationCompat.CATEGORY_ALARM)
+                .build()
+
+
+        with(NotificationManagerCompat.from(requireContext())) {
+            notify(1, builder)
+            Log.i("notify", "Notification is send")
+
+        }
+    }
+
+//    private fun secondNotification() {
+//        val builder =
+//            NotificationCompat.Builder(requireContext(), NotificationHelper.reminderChannel2)
+//                .setSmallIcon(R.drawable.ic_notify)
+//                .setContentTitle("Second Reminder")
+//                .setContentText("Second time, not gonna remind you!")
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                .setAutoCancel(true)
+//                //.setCategory(NotificationCompat.CATEGORY_ALARM)
+//                .build()
+//
+//        with(NotificationManagerCompat.from(requireContext())) {
+//            notify(2, builder)
+//        }
+//    }
 }

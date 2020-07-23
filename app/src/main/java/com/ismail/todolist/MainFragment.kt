@@ -1,12 +1,13 @@
 package com.ismail.todolist
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -66,7 +67,10 @@ class MainFragment : Fragment(), AdapterCallBack {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
+
     }
+
+    // I delete the cardview with checkbox here
 
     override fun onCheckBoxClick(todoItem: TodoItem, position: Int) {
         if (doneCheckBox.isChecked) {
@@ -94,6 +98,5 @@ class MainFragment : Fragment(), AdapterCallBack {
 
     }
 
-    fun sendNotificatonReminder(view: View) {
-    }
+
 }

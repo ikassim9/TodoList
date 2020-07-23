@@ -14,21 +14,6 @@ class ListAdapter(
 ) :
     RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(todoItem: TodoItem) {
-            val position = adapterPosition
-            itemView.setOnClickListener() {
-                callback.onItemClick(todoItem, position)
-            }
-            itemView.doneCheckBox.setOnClickListener() {
-                callback.onCheckBoxClick(todoItem, position)
-            }
-         //   itemView.doneCheckBox.isChecked = true
-
-
-        }
-    }
     private var todoList: List<TodoItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -50,7 +35,6 @@ class ListAdapter(
         holder.bind(currentItem)
 
 
-
     }
 
     fun setList(todo: List<TodoItem>) {
@@ -59,6 +43,20 @@ class ListAdapter(
 
     }
 
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bind(todoItem: TodoItem) {
+            val position = adapterPosition
+            itemView.doneCheckBox.isChecked = false
+
+            itemView.setOnClickListener() {
+                callback.onItemClick(todoItem, position)
+            }
+            itemView.doneCheckBox.setOnClickListener() {
+                callback.onCheckBoxClick(todoItem, position)
+            }
+        }
+    }
 }
 
 
