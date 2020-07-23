@@ -50,7 +50,7 @@
         android:layout_marginTop="24dp"
         android:drawableStart="@drawable/ic_time_picker"
         android:drawablePadding="15dp"
-        android:hint="time"
+        android:hint="Time"
         android:padding="20sp"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -59,83 +59,84 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCalender" />
 
+
+    <!--    <TextView-->
+<!--        android:id="@+id/tvCustomizeReminder"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="28dp"-->
+<!--        android:padding="17dp"-->
+<!--        android:text="Customize your notification"-->
+<!--        android:textColor="@color/colorAccent"-->
+<!--        android:textSize="24sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tv_notification_status" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvReminderDate"-->
+<!--        android:textStyle="bold"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:drawableStart="@drawable/ic_reminder"-->
+<!--        android:drawablePadding="15dp"-->
+<!--        android:hint="Choose reminder date"-->
+<!--        android:padding="20dp"-->
+<!--        android:textSize="24sp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tvCustomizeReminder" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvReminderTime"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:drawableStart="@drawable/ic_reminder"-->
+<!--        android:drawablePadding="15dp"-->
+<!--        android:padding="20dp"-->
+<!--        android:textStyle="bold"-->
+<!--        android:text="Choose reminder time"-->
+<!--        android:textSize="24sp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tvReminderDate" />-->
+
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:id="@+id/notification_group"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="visible"-->
+<!--        app:constraint_referenced_ids="tvReminderDate,tvCustomizeReminder , tvReminderTime" />-->
+
     <TextView
         android:id="@+id/tv_notification_status"
-        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="28dp"
         android:drawableStart="@drawable/ic_reminder_off"
         android:drawablePadding="15dp"
-        android:hint="Notification off"
+        android:hint="Send me notification"
         android:padding="20sp"
         android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time_picker" />
 
-
-    <TextView
-        android:id="@+id/tvCustomizeReminder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:padding="17dp"
-        android:text="Customize your notification"
-        android:textColor="@color/colorAccent"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_notification_status" />
-
-    <TextView
-        android:id="@+id/tvReminderDate"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:drawableStart="@drawable/ic_reminder"
-        android:drawablePadding="15dp"
-        android:hint="Choose reminder date"
-        android:padding="20dp"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCustomizeReminder" />
-
-    <TextView
-        android:id="@+id/tvReminderTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:drawableStart="@drawable/ic_reminder"
-        android:drawablePadding="15dp"
-        android:padding="20dp"
-        android:textStyle="bold"
-        android:text="Choose reminder time"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvReminderDate" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/notification_group"
-        android:background="@color/colorPrimary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="tvReminderDate,tvCustomizeReminder , tvReminderTime" />
-
     <Spinner
         android:id="@+id/notification_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="264dp"
+        android:layout_marginStart="224dp"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_notification_status"
         app:layout_constraintLeft_toRightOf="@id/tv_notification_status"
         app:layout_constraintStart_toStartOf="parent" />
