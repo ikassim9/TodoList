@@ -3,6 +3,7 @@ package com.ismail.todolist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.item_list.view.*
@@ -33,8 +34,6 @@ class ListAdapter(
         holder.itemView.tvTitle.text = currentItem.title
         holder.itemView.dueDate.text = currentItem.dueDate
         holder.bind(currentItem)
-
-
     }
 
     fun setList(todo: List<TodoItem>) {
@@ -47,7 +46,6 @@ class ListAdapter(
 
         fun bind(todoItem: TodoItem) {
             val position = adapterPosition
-            itemView.doneCheckBox.isChecked = false
 
             itemView.setOnClickListener() {
                 callback.onItemClick(todoItem, position)
@@ -57,7 +55,7 @@ class ListAdapter(
             }
         }
     }
+
+
 }
-
-
 

@@ -3,8 +3,6 @@ package com.ismail.todolist
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -13,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavDeepLink
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ismail.todolist.db.TodoItem
@@ -103,7 +100,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Log.i("updated_item", "$item")
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-                sendNotificationReminder()
+                // sendNotificationReminder()
 
                 //  secondNotification()
 
@@ -116,15 +113,15 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                     Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val toDOItem = TodoItem(0, taskName, dueDate, time)
+                val toDOItem = TodoItem(0, taskName, due, time)
                 todoViewModel.insertItem(toDOItem)
                 Log.i("item_inserted", "Item is inserted -> $toDOItem ")
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
-                Toast.makeText(requireContext(), "Item inserted successfully", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT)
                     .show()
                 // sendNotificationReminder()
 
-                sendNotificationReminder()
+                //sendNotificationReminder(toDOItem)
             }
         }
     }
@@ -153,7 +150,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 id: Long
             ) {
                 toggle_notifcation.text = notification_type[position]
-                var selectedItem: String = notification_type[position].toString()
+                val selectedItem: String = notification_type[position].toString()
                 // var item = selectedItem.toUpperCase()
                 notificationOnOrOff = selectedItem != "OFF"
             }
@@ -190,43 +187,75 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         //val calendar = Calendar.getInstance()
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
         cal.set(Calendar.MINUTE, minute)
+        cal.set(Calendar.SECOND, 0)
         val time = timeFormat.format(cal.time)
         todoViewModel.setTimePickerValue(time)
+        setAlarm(cal)
         Log.i("time", "${cal.time}")
-        Toast.makeText(requireContext(), "Time has been chosen", Toast.LENGTH_SHORT).show()
     }
-
-
     companion object {
         val cal: Calendar = Calendar.getInstance()
     }
+//    private fun sendNotificationReminder(todoItem: TodoItem) {
+//        val notificationIntent = Intent(activity, MainActivity::class.java).apply {
+//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        }
+//        notificationIntent.putExtra("key", todoItem.id)
+//        val remoteView =
+//            RemoteViews(requireContext().packageName, R.layout.notification_custom_layout)
+//        val calender = Calendar.getInstance()
+//        val time: String = timeFormat.format(calender.time).toString()
+//        remoteView.setTextViewText(R.id.tv_notification_title, "Reminder for ${todoItem.title}")
+//        remoteView.setTextViewText(R.id.tv_content, time)
+//
+//        val pendingIntent: PendingIntent =
+//            PendingIntent.getActivity(
+//                requireContext(),
+//                0,
+//                notificationIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//            )
+//        val builder =
+//            NotificationCompat.Builder(requireContext(), NotificationHelper.reminderchannelID)
+//                .setSmallIcon(R.drawable.ic_notify)
+////                .setContent(remoteView)
+//                .setCustomContentView(remoteView)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                .setAutoCancel(true)
+//                .setContentIntent(pendingIntent)
+//                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+//                .build()
+//
+//
+//        with(NotificationManagerCompat.from(requireContext())) {
+//            notify(1, builder)
+//            Log.i("notify", "Notification is send")
+//
+//        }
+//    }
 
-    private fun sendNotificationReminder() {
-        val notificationIntent = Intent(activity, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK  or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        notificationIntent.putExtra("fragment", "mainFragment")
-        val pendingIntent : PendingIntent = PendingIntent.getActivity(requireContext(), 0 ,  notificationIntent, 0 )
-        val builder =
-            NotificationCompat.Builder(requireContext(), NotificationHelper.reminderchannelID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("First notification!")
-                .setContentText("This is the first notification :) ")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                //.setCategory(NotificationCompat.CATEGORY_ALARM)
-                .build()
+
+    private fun setAlarm(calendar: Calendar) {
+        //val time = DetailFragment.cal.time
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, 0)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        Log.i("alarm", "Alarm is set")
 
 
-        with(NotificationManagerCompat.from(requireContext())) {
-            notify(1, builder)
-            Log.i("notify", "Notification is send")
-
-        }
     }
 
-//    private fun secondNotification() {
+    private fun cancelAlarm() {
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, 0)
+        alarmManager.cancel(pendingIntent)
+        Toast.makeText(requireContext(), "Alarm is cancel", Toast.LENGTH_SHORT).show()
+    }
+}
+
+//  private fun secondNotification() {
 //        val builder =
 //            NotificationCompat.Builder(requireContext(), NotificationHelper.reminderChannel2)
 //                .setSmallIcon(R.drawable.ic_notify)
@@ -234,11 +263,11 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 //                .setContentText("Second time, not gonna remind you!")
 //                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //                .setAutoCancel(true)
+//                .setGroup(NotificationHelper.notificationGroupID)
 //                //.setCategory(NotificationCompat.CATEGORY_ALARM)
 //                .build()
 //
 //        with(NotificationManagerCompat.from(requireContext())) {
-//            notify(2, builder)
-//        }
-//    }
-}
+//            notify(1, builder)
+//
+//}
