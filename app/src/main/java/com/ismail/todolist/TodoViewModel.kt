@@ -14,13 +14,6 @@ import kotlinx.coroutines.launch
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
     val getAllTodoItems: LiveData<List<TodoItem>>
     private val repository: TodoRepository
-    private val selectedDate: MutableLiveData<String> = MutableLiveData()
-    private val selectedTime: MutableLiveData<String> = MutableLiveData()
-    val date: LiveData<String>
-        get() = selectedDate
-    val time: LiveData<String>
-        get() = selectedTime
-
     init {
         val todoDao = TodoDatabase.getDatabase(application).todoDao
         repository = TodoRepository(dao = todoDao)
@@ -32,6 +25,7 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
             repository.insert(todoItem)
         }
     }
+
     fun updateItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.update(todoItem)
@@ -50,14 +44,6 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
             repository.deleteAll()
 
         }
-    }
-
-    fun setDateCalenderValue(date: String) {
-        selectedDate.value = date
-    }
-
-    fun setTimePickerValue(time: String) {
-        selectedTime.value = time
     }
 }
 
