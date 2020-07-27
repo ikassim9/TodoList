@@ -136,6 +136,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/btnNotificationStatus"
             android:layout_width="wrap_content"
+            android:checked="true"
             android:layout_height="wrap_content"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_notification_status"
             app:layout_constraintRight_toRightOf="@id/tv_notification_status"

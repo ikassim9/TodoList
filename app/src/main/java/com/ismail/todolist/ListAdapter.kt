@@ -15,7 +15,8 @@ class ListAdapter(
 ) :
     RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
 
-    private var todoList: List<TodoItem> = ArrayList()
+    private var todoList: List<TodoItem> = ArrayList<TodoItem>()
+    var selected: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val context = parent.context
@@ -34,8 +35,8 @@ class ListAdapter(
         holder.bind(currentItem)
     }
 
-    fun setList(todoItem: List<TodoItem>) {
-    val oldList = todoList
+    fun setList(todoItem: ArrayList<TodoItem>) {
+        val oldList = todoList
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(
             TodoItemDiffCal(oldList, todoItem)
         )
@@ -45,22 +46,33 @@ class ListAdapter(
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         fun bind(todoItem: TodoItem) {
             val position = adapterPosition
+            itemView.doneCheckBox.isChecked = false
             itemView.tvTitle.text = todoItem.title
             itemView.dueDate.text = todoItem.dueDate
             itemView.doneCheckBox.isChecked = false
             itemView.setOnClickListener() {
                 callback.onItemClick(todoItem, position)
             }
-            itemView.doneCheckBox.setOnClickListener() {
-                callback.onCheckBoxClick(todoItem, position)
+            itemView.doneCheckBox.setOnCheckedChangeListener { view, isCheck ->
+                callback.checkBoxListener(
+                    view,
+                    isCheck,
+                    todoItem,
+                    position
+                )
+            }
+            itemView.setOnLongClickListener{
+                callback.onItemLongClick(todoItem, position)
             }
         }
     }
 
-    class TodoItemDiffCal(private var oldList: List<TodoItem>, private var newList: List<TodoItem>) :
+    class TodoItemDiffCal(
+        private var oldList: List<TodoItem>,
+        private var newList: List<TodoItem>
+    ) :
         DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition].id == newList[newItemPosition].id
@@ -76,12 +88,10 @@ class ListAdapter(
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition] == newList[newItemPosition]
-
         }
     }
-        fun removeItem(position: Int): TodoItem {
-            return todoList[position]
-        }
+    fun removeItem(position: Int): TodoItem {
+        return todoList[position]
     }
-
+}
 

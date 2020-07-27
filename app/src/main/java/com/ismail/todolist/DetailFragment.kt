@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.ismail.todolist.databinding.FragmentDetailBinding
+import com.ismail.todolist.databinding.FragmentMainBinding
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
@@ -22,9 +24,12 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val args by navArgs<DetailFragmentArgs>()
     private var notificationOnOrOff = false
     private var c: Calendar = Calendar.getInstance()
+    private var _binding : FragmentDetailBinding? = null
+    private val binding
+        get() = _binding!!
     private val reminderchannelID = "reminder_channel_id"
     val reminderChannel: String = "reminderChannel"
-    val request_ID = 2
+    private val request_ID = 2
     private lateinit var toggle_notifcation: TextView
     private lateinit var spinner: Spinner
     private val now: Calendar = Calendar.getInstance()
@@ -43,13 +48,13 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_detail, container, false)
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
-        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        detailViewModel = ViewModelProvider( this).get(DetailViewModel::class.java)
         observeCalenderPicker()
         observeTimePicker()
-        calender = view.findViewById(R.id.tvCalender)
-        timePicker = view.findViewById(R.id.tv_time_picker)
+        calender =binding.tvCalender
+        timePicker = binding.tvTimePicker
         calender.setOnClickListener {
             DatePickerFragment().show(childFragmentManager, "Date Picker")
         }
@@ -57,19 +62,22 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             TimePickerFragment().show(childFragmentManager, "Time Picker")
         }
 
-        return view
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_item, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val title = edtTaskName.text.toString()
         when (item.itemId) {
@@ -81,12 +89,11 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         }
         return super.onOptionsItemSelected(item)
     }
-
     private fun saveTodoItem() {
         if (arguments != null) {
             val name = edtTaskName.text.toString()
-            val dueDate = tvCalender.text.toString()
-            val dueTime = tv_time_picker.text.toString()
+            val dueDate = calender.text.toString()
+            val dueTime = timePicker.text.toString()
             val item = args.item?.id?.let { TodoItem(it, name, dueDate, dueTime) }
             if (item != null) {
                 todoViewModel.updateItem(item)
@@ -94,9 +101,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
             } else {
-                val taskName = edtTaskName.text.toString()
-                val due = tvCalender.text.toString()
-                val time = tv_time_picker.text.toString()
+                val taskName = binding.edtTaskName.text.toString()
+                val due = calender.text.toString()
+                val time = timePicker.text.toString()
 
                 if (taskName.isBlank()) {
                     Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
@@ -116,17 +123,17 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         super.onViewCreated(view, savedInstanceState)
         getArgs()
         toggle_notifcation = view.findViewById(R.id.tv_notification_status)
-        btnNotificationStatus.setOnClickListener() {
-          updateNotificationStatus()
+        binding.btnNotificationStatus.setOnClickListener() {
+             updateNotificationStatus()
         }
     }
 
     private fun getArgs() {
         if (arguments != null) {
             detailArgs = DetailFragmentArgs.fromBundle(requireArguments())
-            view?.edtTaskName?.setText(detailArgs.item?.title)
-            view?.tvCalender?.text = detailArgs.item?.dueDate
-            view?.tv_time_picker?.text = detailArgs.item?.dueTime
+            binding.edtTaskName.setText(detailArgs.item?.title)
+           calender.text = detailArgs.item?.dueDate
+           timePicker.text = detailArgs.item?.dueTime
         }
     }
 
@@ -149,7 +156,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         cal.set(Calendar.SECOND, 0)
         val time = timeFormat.format(cal.time)
         detailViewModel.setTimePickerValue(time)
-        setAlarm(cal)
+       // setAlarm(cal)
         Log.i("time", "${cal.time}")
     }
 
@@ -174,10 +181,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         Log.i("alarm_cancel", "Alarm is cancel")
         Toast.makeText(requireContext(), "Alarm is cancel", Toast.LENGTH_SHORT).show()
     }
-    
+
     private fun observeCalenderPicker() {
         detailViewModel.date.observe(viewLifecycleOwner, androidx.lifecycle.Observer { date ->
-            tvCalender.text = date
+            calender.text = date
             Log.i("date_picker", "$date")
         })
 
@@ -185,7 +192,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
     private fun observeTimePicker() {
         detailViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer { time ->
-            tv_time_picker.text = time
+           timePicker.text = time
             Log.i("time_picker", "$time")
 
 
@@ -193,13 +200,20 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun observeNotificationStatus() {
-        detailViewModel.status.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            btnNotificationStatus.isChecked = it
-        })
+        //  detailViewModel.status.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        // btnNotificationStatus.isChecked = it
+
     }
 
     private fun updateNotificationStatus() {
-        detailViewModel.setNotificationStatus(btnNotificationStatus.isChecked)
+        //  detailViewModel.setNotificationStatus(btnNotificationStatus.isChecked)
+        if (btnNotificationStatus.isChecked) {
+            Toast.makeText(requireContext(), "Alarm is set", Toast.LENGTH_SHORT).show()
+        } else {
+            cancelAlarm()
+            Toast.makeText(requireContext(), "Alarm has been cancel ", Toast.LENGTH_SHORT).show()
+
+        }
 
 
     }
