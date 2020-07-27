@@ -23,11 +23,7 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
     private val descriptionText = "This is a reminder"
     private val importance = NotificationManager.IMPORTANCE_DEFAULT
     private val reminderchannelID = "reminder_channel_id"
-    val reminderChannel2: String = "reminderChannel"
-    val notificationGroupID: String = "notification_group_id"
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
-
-
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,7 +40,6 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.GREEN
         getManager().createNotificationChannel(notificationChannel)
-
     }
 
      fun getManager(): NotificationManager {
@@ -52,9 +47,7 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         }
         return manager as NotificationManager
-
     }
-
     fun retrieveNotificationBuilder(): NotificationCompat.Builder {
         val notificationIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -65,10 +58,10 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
         val time: String = timeFormat.format(calender.time).toString()
         remoteView.setTextViewText(R.id.tv_notification_title, "Reminder for something")
         remoteView.setTextViewText(R.id.tv_content, time)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,  PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,  0)
         return NotificationCompat.Builder(applicationContext, reminderchannelID)
             .setCustomContentView(remoteView)
-            .setSmallIcon(R.drawable.ic_notify)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_ALARM)

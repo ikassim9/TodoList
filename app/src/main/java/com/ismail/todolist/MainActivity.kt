@@ -14,20 +14,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupActionBarWithNavController(findNavController(R.id.fragment))
         val extra = intent.extras
-        if(extra != null){
-            if(extra.containsKey("key")){
-                val fragmentTrasaction =supportFragmentManager.beginTransaction()
-                fragmentTrasaction.replace(R.id.fragment, DetailFragment()
-                )
-
-            }
-        }
-
         }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragment)
-
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
