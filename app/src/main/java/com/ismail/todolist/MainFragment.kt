@@ -116,7 +116,6 @@ class MainFragment : Fragment(), AdapterCallBack {
             Log.i("fab_btn", "Fab button is pressed")
         }
     }
-
     private fun undoCompletedTaskSnackbar(todoItem: TodoItem) {
         val snackbar: Snackbar =
             Snackbar.make(binding.rootLayout, "Task completed", Snackbar.LENGTH_SHORT)

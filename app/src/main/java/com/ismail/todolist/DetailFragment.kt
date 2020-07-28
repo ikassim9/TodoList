@@ -29,7 +29,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val reminderchannelID = "reminder_channel_id"
     val reminderChannel: String = "reminderChannel"
     private val request_ID = 2
-    private lateinit var toggle_notifcation: TextView
     private lateinit var spinner: Spinner
     private val now: Calendar = Calendar.getInstance()
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
@@ -51,7 +50,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         observeCalenderPicker()
-        observeNotificationStatus()
         observeTimePicker()
         calender = binding.tvCalender
         timePicker = binding.tvTimePicker
@@ -110,16 +108,16 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
             } else {
-//                val taskName = binding.edtTaskName.text.toString()
-//                val due = calender.text.toString()
-//                val time = timePicker.text.toString()
-//                val statusOfNotification = binding.btnNotificationStatus.isChecked
+                val taskName = binding.edtTaskName.text.toString()
+                val due = calender.text.toString()
+                val time = timePicker.text.toString()
+                val statusOfNotification = binding.btnNotificationStatus.isChecked
 
                 if (name.isBlank()) {
                     Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val toDOItem = TodoItem(0, name, dueDate, dueTime, notificationStatus)
+                val toDOItem = TodoItem(0, taskName, due, time, statusOfNotification)
                 todoViewModel.insertItem(toDOItem)
                 Log.i("item_inserted", "Item is inserted $toDOItem ")
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
@@ -128,12 +126,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             }
         }
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
-        toggle_notifcation = view.findViewById(R.id.tv_notification_status)
-
+        observeNotificationStatus()
 
     }
 
@@ -143,6 +139,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             binding.edtTaskName.setText(detailArgs.item?.title)
             calender.text = detailArgs.item?.dueDate
             timePicker.text = detailArgs.item?.dueTime
+            binding.btnNotificationStatus.isChecked = detailArgs.item?.notificationOnOrOff ?: false
+
+            Log.i("binding", "${binding.btnNotificationStatus.isChecked}")
         }
     }
 
