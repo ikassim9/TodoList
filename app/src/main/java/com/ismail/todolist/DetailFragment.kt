@@ -63,6 +63,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             updateNotificationStatus(ischeck)
         }
 
+
         return binding.root
     }
 
@@ -126,6 +127,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             }
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
@@ -162,8 +164,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
         cal.set(Calendar.MINUTE, minute)
         cal.set(Calendar.SECOND, 0)
-        val time = timeFormat.format(cal.time)
+        val time = timeFormat.format(cal.timeInMillis)
         detailViewModel.setTimePickerValue(time)
+
         //  updateNotificationStatus(cal)
     }
 
@@ -172,11 +175,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun setAlarm(calendar: Calendar) {
-        //val time = DetailFragment.cal.time
         val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), request_ID, intent, 0)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
     }
 
     private fun cancelAlarm() {
@@ -199,6 +201,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             timePicker.text = time
             Log.i("time_picker", "$time")
 
+        })
+    }
+    fun observeCalenderText(){
+        detailViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
 
         })
     }
@@ -214,10 +220,23 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun updateNotificationStatus(status: Boolean) {
-//        status = binding.btnNotificationStatus.isChecked
         detailViewModel.setNotificationStatus(status)
-    }
+        if (status) {
+            setAlarm(cal)
+            Toast.makeText(
+                requireContext(),
+                "Alarm is set for ${timeFormat.format(cal.time)}",
+                Toast.LENGTH_SHORT
+            ).show()
+            Log.i("alarm_set", "${timeFormat.format(cal.time)}")
+        } else {
+            cancelAlarm()
+            Toast.makeText(requireContext(), "Alarm is cancel ", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_cancel", "$status")
 
+        }
+
+    }
     private fun hideVirtualKeyboard() {
         try {
             val imm =
@@ -227,8 +246,20 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             e.printStackTrace()
         }
 
-
     }
 
+    private fun update() {
+        val status = binding.btnNotificationStatus.isChecked
+        detailViewModel.setNotificationStatus(status)
+        if (status) {
+            setAlarm(cal)
+            Toast.makeText(requireContext(), "Alarm is set for ${timeFormat.format(cal.time)}", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_set", "${timeFormat.format(cal.time)}")
+        } else {
+            cancelAlarm()
+            Toast.makeText(requireContext(), "Alarm is cancel ", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_cancel", "$status")
 
+        }
+    }
 }
