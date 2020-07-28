@@ -23,7 +23,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val args by navArgs<DetailFragmentArgs>()
     private var notificationOnOrOff = false
     private var c: Calendar = Calendar.getInstance()
-    private var _binding : FragmentDetailBinding? = null
+    private var _binding: FragmentDetailBinding? = null
     private val binding
         get() = _binding!!
     private val reminderchannelID = "reminder_channel_id"
@@ -49,10 +49,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     ): View? {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
-        detailViewModel = ViewModelProvider( this).get(DetailViewModel::class.java)
+        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         observeCalenderPicker()
         observeTimePicker()
-        calender =binding.tvCalender
+        calender = binding.tvCalender
         timePicker = binding.tvTimePicker
         calender.setOnClickListener {
             DatePickerFragment().show(childFragmentManager, "Date Picker")
@@ -73,22 +73,25 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         inflater.inflate(R.menu.add_item, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val title = edtTaskName.text.toString()
         when (item.itemId) {
             R.id.add_item -> {
                 saveTodoItem()
-                hideKeyboard()
+                hideVirtualKeyboard()
                 // cancelAlarm()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
     private fun saveTodoItem() {
         if (arguments != null) {
             val name = edtTaskName.text.toString()
@@ -124,7 +127,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         getArgs()
         toggle_notifcation = view.findViewById(R.id.tv_notification_status)
         binding.btnNotificationStatus.setOnClickListener() {
-             updateNotificationStatus()
+            updateNotificationStatus()
         }
     }
 
@@ -132,8 +135,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         if (arguments != null) {
             detailArgs = DetailFragmentArgs.fromBundle(requireArguments())
             binding.edtTaskName.setText(detailArgs.item?.title)
-           calender.text = detailArgs.item?.dueDate
-           timePicker.text = detailArgs.item?.dueTime
+            calender.text = detailArgs.item?.dueDate
+            timePicker.text = detailArgs.item?.dueTime
         }
     }
 
@@ -156,7 +159,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         cal.set(Calendar.SECOND, 0)
         val time = timeFormat.format(cal.time)
         detailViewModel.setTimePickerValue(time)
-       // setAlarm(cal)
+        // setAlarm(cal)
         Log.i("time", "${cal.time}")
     }
 
@@ -192,7 +195,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
     private fun observeTimePicker() {
         detailViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer { time ->
-           timePicker.text = time
+            timePicker.text = time
             Log.i("time_picker", "$time")
 
 
@@ -206,7 +209,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun updateNotificationStatus() {
-        //  detailViewModel.setNotificationStatus(btnNotificationStatus.isChecked)
+        // detailViewModel.setNotificationStatus(btnNotificationStatus.isChecked)
         if (btnNotificationStatus.isChecked) {
             Toast.makeText(requireContext(), "Alarm is set", Toast.LENGTH_SHORT).show()
         } else {
@@ -215,15 +218,17 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         }
     }
-        fun hideKeyboard(){
-            try {
-                val imm =
-                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(requireActivity().currentFocus!!.windowToken, 0)
-            } catch (e: Exception) {
-              e.printStackTrace()
-            }
 
+    private fun hideVirtualKeyboard() {
+        try {
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
     }
+
+
+}

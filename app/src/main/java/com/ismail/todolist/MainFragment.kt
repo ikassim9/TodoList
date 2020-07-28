@@ -1,10 +1,10 @@
 package com.ismail.todolist
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,16 +12,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.ismail.todolist.databinding.FragmentMainBinding
 import com.ismail.todolist.db.TodoItem
-import kotlinx.android.synthetic.main.item_list.*
 
-class MainFragment : Fragment() , AdapterCallBack {
+class MainFragment : Fragment(), AdapterCallBack {
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var adapter: ListAdapter
     private var _binding: FragmentMainBinding? = null
     private val binding
         get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,12 +64,12 @@ class MainFragment : Fragment() , AdapterCallBack {
     }
 
     override fun checkBoxListener(view: View, ischeck: Boolean, todoItem: TodoItem, position: Int) {
-       if(ischeck) {
-           todoViewModel.deleteItem(todoItem)
-           Toast.makeText(requireContext(), "Task name ${todoItem.title} is completed", Toast.LENGTH_SHORT).show()
-           Log.i("delete_check", "$todoItem is check at position $position")
+        if (ischeck) {
+            todoViewModel.deleteItem(todoItem)
+            completedTaskSnackbar(position, todoItem)
+            Log.i("delete_check", "$todoItem is check at position $position")
 
-       }
+        }
     }
 
     override fun onItemClick(todoItem: TodoItem, position: Int) {
@@ -120,4 +121,20 @@ class MainFragment : Fragment() , AdapterCallBack {
         }
     }
 
+    private fun completedTaskSnackbar(position: Int , todoItem: TodoItem) {
+        val snackbar =
+            Snackbar.make(binding.rootLayout, "Snackbar is pressed", Snackbar.LENGTH_INDEFINITE)
+        snackbar.apply {
+            setActionTextColor(Color.RED)
+            snackbar.setAction("Undo", View.OnClickListener {
+                undoDelete(position, todoItem)
+            })
+        }
+            snackbar.show()
+        }
+
+    private fun undoDelete(position: Int, todoItem: TodoItem){
+        todoViewModel.insertItem(todoItem)
+
+    }
 }
