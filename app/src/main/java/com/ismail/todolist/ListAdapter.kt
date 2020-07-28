@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ismail.todolist.db.TodoItem
+import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_list.view.*
 
 
@@ -15,7 +16,7 @@ class ListAdapter(
 ) :
     RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
 
-    private var todoList: List<TodoItem> = ArrayList<TodoItem>()
+    private var todoList: List<TodoItem> = ArrayList()
     var selected: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -35,7 +36,7 @@ class ListAdapter(
         holder.bind(currentItem)
     }
 
-    fun setList(todoItem: ArrayList<TodoItem>) {
+    fun setList(todoItem: List<TodoItem>) {
         val oldList = todoList
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(
             TodoItemDiffCal(oldList, todoItem)
@@ -52,6 +53,7 @@ class ListAdapter(
             itemView.tvTitle.text = todoItem.title
             itemView.dueDate.text = todoItem.dueDate
             itemView.doneCheckBox.isChecked = false
+        //    itemView.btnNotificationStatus.isChecked = todoItem.notificationOnOrOff
             itemView.setOnClickListener() {
                 callback.onItemClick(todoItem, position)
             }
@@ -90,8 +92,9 @@ class ListAdapter(
             return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
-    fun removeItem(position: Int): TodoItem {
+    fun addItem(position: Int): TodoItem {
         return todoList[position]
     }
+
 }
 
