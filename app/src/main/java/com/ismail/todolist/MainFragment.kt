@@ -66,7 +66,7 @@ class MainFragment : Fragment(), AdapterCallBack {
     override fun checkBoxListener(view: View, ischeck: Boolean, todoItem: TodoItem, position: Int) {
         if (ischeck) {
             todoViewModel.deleteItem(todoItem)
-            completedTaskSnackbar(position, todoItem)
+            undoCompletedTaskSnackbar(todoItem)
             Log.i("delete_check", "$todoItem is check at position $position")
 
         }
@@ -81,15 +81,11 @@ class MainFragment : Fragment(), AdapterCallBack {
     override fun onItemLongClick(todoItem: TodoItem, position: Int): Boolean {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         dialogBuilder.setTitle("Delete item?")
-        dialogBuilder.setMessage("Do you want to delete all your item?")
+        dialogBuilder.setMessage("Do you want to delete this task (${todoItem.title})?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 todoViewModel.deleteItem(todoItem)
-                Toast.makeText(
-                    requireContext(),
-                    "Item has been deleted at position $position",
-                    Toast.LENGTH_SHORT
-                ).show()
+                undoDeletedTaskSnackbar(todoItem)
                 Log.i("item_deleted", "Deleted at position $position")
             }
             .setNegativeButton("Cancel") { dialog, id ->
@@ -101,7 +97,7 @@ class MainFragment : Fragment(), AdapterCallBack {
     private fun setUpViewModel() {
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         todoViewModel.getAllTodoItems.observe(viewLifecycleOwner, Observer {
-            adapter.setList(it as ArrayList<TodoItem>)
+            adapter.setList(it)
             Log.i("list", "$it")
         })
     }
@@ -121,20 +117,35 @@ class MainFragment : Fragment(), AdapterCallBack {
         }
     }
 
-    private fun completedTaskSnackbar(position: Int , todoItem: TodoItem) {
-        val snackbar =
-            Snackbar.make(binding.rootLayout, "Snackbar is pressed", Snackbar.LENGTH_INDEFINITE)
+    private fun undoCompletedTaskSnackbar(todoItem: TodoItem) {
+        val snackbar: Snackbar =
+            Snackbar.make(binding.rootLayout, "Task completed", Snackbar.LENGTH_SHORT)
         snackbar.apply {
             setActionTextColor(Color.RED)
-            snackbar.setAction("Undo", View.OnClickListener {
-                undoDelete(position, todoItem)
-            })
+            snackbar.setAction("Undo") {
+                undoDelete(todoItem)
+            }
         }
-            snackbar.show()
-        }
+        snackbar.show()
+    }
 
-    private fun undoDelete(position: Int, todoItem: TodoItem){
+    private fun undoDelete(todoItem: TodoItem) {
         todoViewModel.insertItem(todoItem)
+        Log.i("pos", "$todoItem")
+
 
     }
+
+    private fun undoDeletedTaskSnackbar(todoItem: TodoItem) {
+        val snackbar: Snackbar =
+            Snackbar.make(binding.rootLayout, "Task has been deleted", Snackbar.LENGTH_SHORT)
+        snackbar.apply {
+            setActionTextColor(Color.RED)
+            snackbar.setAction("Undo") {
+                undoDelete(todoItem)
+            }
+        }
+        snackbar.show()
+    }
 }
+

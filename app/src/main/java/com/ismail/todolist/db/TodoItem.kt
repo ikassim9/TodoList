@@ -21,7 +21,11 @@ data class TodoItem(
     val dueDate  : String,
 
     @ColumnInfo(name = "item_dueTime")
-    val dueTime : String
+    val dueTime : String,
+
+    @ColumnInfo(name = "item_notification_status")
+
+    val notificationOnOrOff : Boolean
 
 
 
