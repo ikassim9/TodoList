@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.ismail.todolist.databinding.FragmentDetailBinding
 import com.ismail.todolist.db.TodoItem
 import kotlinx.android.synthetic.main.fragment_detail.*
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,11 +27,14 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private var _binding: FragmentDetailBinding? = null
     private val binding
         get() = _binding!!
+
+    var input: SimpleDateFormat = SimpleDateFormat("dd/MM/yy", Locale.US)
+    val now: Calendar = Calendar.getInstance()
     private val reminderchannelID = "reminder_channel_id"
     val reminderChannel: String = "reminderChannel"
     private val request_ID = 2
     private lateinit var spinner: Spinner
-    private val now: Calendar = Calendar.getInstance()
+   // private val now: Calendar = Calendar.getInstance()
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
     private val dateFormat = SimpleDateFormat("EEEE MMM dd", Locale.US)
     private lateinit var notificationManager: NotificationManager
@@ -54,7 +58,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         calender = binding.tvCalender
         timePicker = binding.tvTimePicker
         calender.setOnClickListener {
-            DatePickerFragment().show(childFragmentManager, "Date Picker")
+           // DatePickerFragment().show(childFragmentManager, "Date Picker")
+            showDialog()
         }
         timePicker.setOnClickListener {
             TimePickerFragment().show(childFragmentManager, "Time Picker")
@@ -132,7 +137,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         super.onViewCreated(view, savedInstanceState)
         getArgs()
         observeNotificationStatus()
-
+        detailViewModel.selected.observe(viewLifecycleOwner, androidx.lifecycle.Observer { date ->
+            tvCalender.text = DateFormat.getInstance().format(date)
+        })
     }
 
     private fun getArgs() {
@@ -147,17 +154,17 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         }
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val calender = Calendar.getInstance()
-        calender.set(Calendar.YEAR, year)
-        calender.set(Calendar.MONTH, month)
-        calender.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        val date: String = dateFormat.format(calender.time)
-        Log.i("date", "${calender.time}")
-        // val selectedDate = dateFormat.parse(tvCalender.text.toString())
-        detailViewModel.setDateCalenderValue(date)
-        Toast.makeText(requireContext(), "Date has been chosen", Toast.LENGTH_SHORT).show()
-    }
+//    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+//        val calender = Calendar.getInstance()
+//        calender.set(Calendar.YEAR, year)
+//        calender.set(Calendar.MONTH, month)
+//        calender.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+//        val date: String = dateFormat.format(calender.time)
+//        Log.i("date", "${calender.time}")
+//        // val selectedDate = dateFormat.parse(tvCalender.text.toString())
+//        detailViewModel.setDateCalenderValue(date)
+//        Toast.makeText(requireContext(), "Date has been chosen", Toast.LENGTH_SHORT).show()
+//    }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         //val calendar = Calendar.getInstance()
@@ -203,7 +210,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         })
     }
-    fun observeCalenderText(){
+
+    fun observeCalenderText() {
         detailViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
 
         })
@@ -237,6 +245,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         }
 
     }
+
     private fun hideVirtualKeyboard() {
         try {
             val imm =
@@ -253,7 +262,11 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         detailViewModel.setNotificationStatus(status)
         if (status) {
             setAlarm(cal)
-            Toast.makeText(requireContext(), "Alarm is set for ${timeFormat.format(cal.time)}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Alarm is set for ${timeFormat.format(cal.time)}",
+                Toast.LENGTH_SHORT
+            ).show()
             Log.i("alarm_set", "${timeFormat.format(cal.time)}")
         } else {
             cancelAlarm()
@@ -262,4 +275,34 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         }
     }
+
+    private fun showDialog() {
+        val calender: Calendar = Calendar.getInstance()
+        try {
+            if (tvCalender.text != null) {
+                val date : Date? = input.parse(tvCalender.text.toString())
+                calender.time = date ?: now.time
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        //   val calender = Calendar.getInstance()
+        val year = calender.get(Calendar.YEAR)
+        val month = calender.get(Calendar.MONTH)
+        val day = calender.get(Calendar.DAY_OF_MONTH)
+        val datePickerDialog = DatePickerDialog(requireContext(), this, year, month, day)
+        datePickerDialog.show()
+
+
+    }
+
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val date = input.format(calendar.time)
+        detailViewModel.setDateCalenderValue(date)
+    }
 }
+
