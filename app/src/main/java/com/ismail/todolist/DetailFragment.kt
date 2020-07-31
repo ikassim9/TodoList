@@ -29,7 +29,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val reminderchannelID = "reminder_channel_id"
     val reminderChannel: String = "reminderChannel"
     private val request_ID = 2
-    private lateinit var toggle_notifcation: TextView
     private lateinit var spinner: Spinner
     private val now: Calendar = Calendar.getInstance()
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
@@ -51,7 +50,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         observeCalenderPicker()
-        observeNotificationStatus()
         observeTimePicker()
         calender = binding.tvCalender
         timePicker = binding.tvTimePicker
@@ -64,6 +62,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         binding.btnNotificationStatus.setOnCheckedChangeListener { view, ischeck ->
             updateNotificationStatus(ischeck)
         }
+
 
         return binding.root
     }
@@ -110,16 +109,16 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
             } else {
-//                val taskName = binding.edtTaskName.text.toString()
-//                val due = calender.text.toString()
-//                val time = timePicker.text.toString()
-//                val statusOfNotification = binding.btnNotificationStatus.isChecked
+                val taskName = binding.edtTaskName.text.toString()
+                val due = calender.text.toString()
+                val time = timePicker.text.toString()
+                val statusOfNotification = binding.btnNotificationStatus.isChecked
 
                 if (name.isBlank()) {
                     Toast.makeText(requireContext(), "Empty task field", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val toDOItem = TodoItem(0, name, dueDate, dueTime, notificationStatus)
+                val toDOItem = TodoItem(0, taskName, due, time, statusOfNotification)
                 todoViewModel.insertItem(toDOItem)
                 Log.i("item_inserted", "Item is inserted $toDOItem ")
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
@@ -132,8 +131,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
-        toggle_notifcation = view.findViewById(R.id.tv_notification_status)
-
+        observeNotificationStatus()
 
     }
 
@@ -143,6 +141,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             binding.edtTaskName.setText(detailArgs.item?.title)
             calender.text = detailArgs.item?.dueDate
             timePicker.text = detailArgs.item?.dueTime
+            binding.btnNotificationStatus.isChecked = detailArgs.item?.notificationOnOrOff ?: false
+
+            Log.i("binding", "${binding.btnNotificationStatus.isChecked}")
         }
     }
 
@@ -163,8 +164,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
         cal.set(Calendar.MINUTE, minute)
         cal.set(Calendar.SECOND, 0)
-        val time = timeFormat.format(cal.time)
+        val time = timeFormat.format(cal.timeInMillis)
         detailViewModel.setTimePickerValue(time)
+
         //  updateNotificationStatus(cal)
     }
 
@@ -173,11 +175,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun setAlarm(calendar: Calendar) {
-        //val time = DetailFragment.cal.time
         val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), request_ID, intent, 0)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
     }
 
     private fun cancelAlarm() {
@@ -200,6 +201,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             timePicker.text = time
             Log.i("time_picker", "$time")
 
+        })
+    }
+    fun observeCalenderText(){
+        detailViewModel.time.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
 
         })
     }
@@ -215,10 +220,23 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
     private fun updateNotificationStatus(status: Boolean) {
-//        status = binding.btnNotificationStatus.isChecked
         detailViewModel.setNotificationStatus(status)
-    }
+        if (status) {
+            setAlarm(cal)
+            Toast.makeText(
+                requireContext(),
+                "Alarm is set for ${timeFormat.format(cal.time)}",
+                Toast.LENGTH_SHORT
+            ).show()
+            Log.i("alarm_set", "${timeFormat.format(cal.time)}")
+        } else {
+            cancelAlarm()
+            Toast.makeText(requireContext(), "Alarm is cancel ", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_cancel", "$status")
 
+        }
+
+    }
     private fun hideVirtualKeyboard() {
         try {
             val imm =
@@ -228,8 +246,20 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             e.printStackTrace()
         }
 
-
     }
 
+    private fun update() {
+        val status = binding.btnNotificationStatus.isChecked
+        detailViewModel.setNotificationStatus(status)
+        if (status) {
+            setAlarm(cal)
+            Toast.makeText(requireContext(), "Alarm is set for ${timeFormat.format(cal.time)}", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_set", "${timeFormat.format(cal.time)}")
+        } else {
+            cancelAlarm()
+            Toast.makeText(requireContext(), "Alarm is cancel ", Toast.LENGTH_SHORT).show()
+            Log.i("alarm_cancel", "$status")
 
+        }
+    }
 }
