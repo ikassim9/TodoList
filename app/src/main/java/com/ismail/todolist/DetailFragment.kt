@@ -28,7 +28,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private val binding
         get() = _binding!!
 
-    var input: SimpleDateFormat = SimpleDateFormat("dd/MM/yy", Locale.US)
+    var input: SimpleDateFormat = SimpleDateFormat("MM/dd/yy", Locale.US)
     val now: Calendar = Calendar.getInstance()
     private val reminderchannelID = "reminder_channel_id"
     val reminderChannel: String = "reminderChannel"
@@ -62,7 +62,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             showDialog()
         }
         timePicker.setOnClickListener {
-            TimePickerFragment().show(childFragmentManager, "Time Picker")
+//            TimePickerFragment().show(childFragmentManager, "Time Picker")
+            showTimePicker()
         }
         binding.btnNotificationStatus.setOnCheckedChangeListener { view, ischeck ->
             updateNotificationStatus(ischeck)
@@ -166,16 +167,16 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 //        Toast.makeText(requireContext(), "Date has been chosen", Toast.LENGTH_SHORT).show()
 //    }
 
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        //val calendar = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        cal.set(Calendar.MINUTE, minute)
-        cal.set(Calendar.SECOND, 0)
-        val time = timeFormat.format(cal.timeInMillis)
-        detailViewModel.setTimePickerValue(time)
+//    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+//        //val calendar = Calendar.getInstance()
+//        cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+//        cal.set(Calendar.MINUTE, minute)
+//        cal.set(Calendar.SECOND, 0)
+//        val time = timeFormat.format(cal.timeInMillis)
+//        detailViewModel.setTimePickerValue(time)
 
         //  updateNotificationStatus(cal)
-    }
+
 
     companion object {
         val cal: Calendar = Calendar.getInstance()
@@ -291,6 +292,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         val month = calender.get(Calendar.MONTH)
         val day = calender.get(Calendar.DAY_OF_MONTH)
         val datePickerDialog = DatePickerDialog(requireContext(), this, year, month, day)
+        datePickerDialog.datePicker.minDate  = System.currentTimeMillis() - 1000
         datePickerDialog.show()
 
 
@@ -302,7 +304,35 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         val date = input.format(calendar.time)
+      //  val someformat = dateFormat.format(calendar.time) // don't use. Date is not safe somehow...
         detailViewModel.setDateCalenderValue(date)
     }
+    private fun showTimePicker() {
+        val calendar = Calendar.getInstance()
+        try {
+            if (timePicker.text != null) {
+                val time = timeFormat.parse(timePicker.text.toString())
+                calendar.time = time ?: now.time
+            }
+        }
+        catch (e : Exception){
+            e.printStackTrace()
+        }
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val timePickerDialogue = TimePickerDialog(requireContext(), this, hour, minute, android.text.format.DateFormat.is24HourFormat(requireContext()))
+        timePickerDialogue.show()
+    }
+
+    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        calendar.set(Calendar.MINUTE, minute)
+        val time : String = timeFormat.format(calendar.time)
+        //val timeTextView: String = time.toString()
+        detailViewModel.setTimePickerValue(time)
+    }
+
 }
+
 
