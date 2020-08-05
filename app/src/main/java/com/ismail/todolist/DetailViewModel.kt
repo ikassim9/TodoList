@@ -10,14 +10,13 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
     private val selectedDate: MutableLiveData<String> = MutableLiveData()
     private val selectedTime: MutableLiveData<String> = MutableLiveData()
     private val notificationStatus: MutableLiveData<Boolean> = MutableLiveData()
-    private val dates: MutableLiveData<Date> = MutableLiveData()
+    private val timeDate: MutableLiveData<Calendar> = MutableLiveData()
 
-    val selected: LiveData<Date>
-        get() = dates
+    val calenderTime: LiveData<Calendar>
+        get() = timeDate
 
-
-    fun displaySelectedDate(chosenDate: Date) {
-        dates.value = chosenDate
+    fun displaySelectedTIme(calendarTime: Calendar) {
+        timeDate.value = calendarTime
     }
 
      val status: LiveData<Boolean>

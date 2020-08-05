@@ -64,6 +64,6 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
+
                }
 }

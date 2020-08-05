@@ -1,6 +1,10 @@
 package com.ismail.todolist
 
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -116,6 +120,7 @@ class MainFragment : Fragment(), AdapterCallBack {
             Log.i("fab_btn", "Fab button is pressed")
         }
     }
+
     private fun undoCompletedTaskSnackbar(todoItem: TodoItem) {
         val snackbar: Snackbar =
             Snackbar.make(binding.rootLayout, "Task completed", Snackbar.LENGTH_SHORT)
@@ -146,5 +151,15 @@ class MainFragment : Fragment(), AdapterCallBack {
         }
         snackbar.show()
     }
-}
 
+    private fun cancelAlarm() {
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            DetailFragment.request_ID, intent, 0
+        )
+        alarmManager.cancel(pendingIntent)
+        Log.d("alarm_cancel", "alarm canceled!")
+    }
+}
