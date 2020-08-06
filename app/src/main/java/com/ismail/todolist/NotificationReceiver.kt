@@ -13,7 +13,7 @@ class NotificationReceiver : BroadcastReceiver() {
         )
         val alarmManagerHelper = AlarmManagerHelper(context)
         val builder = alarmManagerHelper.retrieveNotificationBuilder().build()
-        alarmManagerHelper.getManager().notify(0, builder)
+        alarmManagerHelper.getManager().notify(1, builder)
 
     }
 }

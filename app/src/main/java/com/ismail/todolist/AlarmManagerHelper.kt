@@ -58,7 +58,7 @@ class AlarmManagerHelper(base: Context) : ContextWrapper(base) {
         val time: String = timeFormat.format(calender.time).toString()
         remoteView.setTextViewText(R.id.tv_notification_title, "Reminder for something")
         remoteView.setTextViewText(R.id.tv_content, time)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,  0)
+        val pendingIntent = PendingIntent.getActivity(this, 1, notificationIntent,  0)
         return NotificationCompat.Builder(applicationContext, reminderchannelID)
             .setCustomContentView(remoteView)
             .setSmallIcon(R.drawable.ic_notification)
