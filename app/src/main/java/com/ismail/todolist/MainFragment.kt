@@ -53,8 +53,9 @@ class MainFragment : Fragment(), AdapterCallBack {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.delete_all_items -> {
-                todoViewModel.deleteAllItems()
-                Toast.makeText(requireContext(), "All items deleted", Toast.LENGTH_SHORT).show()
+                deleteAllItemDiolag()
+                cancelAlarm()
+                Toast.makeText(requireContext(), "All tasks have beeng deleted", Toast.LENGTH_SHORT).show()
                 return true
             }
         }
@@ -157,9 +158,24 @@ class MainFragment : Fragment(), AdapterCallBack {
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext(),
-            DetailFragment.request_ID, intent, 0
+            1, intent, 0
         )
         alarmManager.cancel(pendingIntent)
         Log.d("alarm_cancel", "alarm canceled!")
     }
+
+    private fun deleteAllItemDiolag() : Boolean {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        dialogBuilder.setTitle("Delete all tasks?")
+        dialogBuilder.setMessage("Do you want to delete all tasks?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, id ->
+                todoViewModel.deleteAllItems()
+            }
+            .setNegativeButton("Cancel") { dialog, id ->
+                dialog.cancel()
+            }.show()
+    return true
+
+}
 }
