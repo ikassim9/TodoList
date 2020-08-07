@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -25,12 +26,15 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     DatePickerDialog.OnDateSetListener {
     private val args by navArgs<DetailFragmentArgs>()
     private var notificationOnOrOff = false
+     val longBundle : String = "longBundle"
     private var c: Calendar = Calendar.getInstance()
     private var _binding: FragmentDetailBinding? = null
     private val binding
         get() = _binding!!
 
-   // private var input: SimpleDateFormat = SimpleDateFormat("MM/dd/yy", Locale.US)
+    var calenderTimeMill : Long = 0
+
+    // private var input: SimpleDateFormat = SimpleDateFormat("MM/dd/yy", Locale.US)
     private val now: Calendar = Calendar.getInstance()
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
     private var dateFormatter = SimpleDateFormat("EEE MMM dd, yyyy", Locale.US)
@@ -88,9 +92,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         when (item.itemId) {
             R.id.add_item -> {
                 saveTodoItem()
-                // cancelAlarm()
                 hideVirtualKeyboard()
-                // cancelAlarm()
                 return true
             }
         }
@@ -152,8 +154,10 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private fun setAlarm(calendar: Calendar) {
         val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
+//        val longBundle : Long = Bundle().getLong(longBundle)
+        val timeInMill = calenderTimeMill  + calendar.timeInMillis
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), 1, intent, 0)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMill, pendingIntent)
         Log.i("cal_alrm", "${calendar.timeInMillis}")
 //        Toast.makeText(requireContext(), "Alarm: ${calendar.time}",Toast.LENGTH_SHORT).show()
     }
@@ -161,10 +165,12 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private fun cancelAlarm() {
         val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), request_ID, intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 1, intent, 0)
         alarmManager.cancel(pendingIntent)
         Log.d("alarm_cancel", "alarm canceled!")
+
     }
+
 
     private fun observeCalenderPicker() {
         detailViewModel.date.observe(viewLifecycleOwner, androidx.lifecycle.Observer { date ->
@@ -231,7 +237,18 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         val date = dateFormatter.format(calendar.time)
-        setAlarm(calendar)
+        val alarm_cal = calendar.timeInMillis
+        var dateConvertToLongTime = calendar.timeInMillis
+        if(DateUtils.isToday(dateConvertToLongTime)){
+            dateConvertToLongTime  = 0
+        }
+
+        calenderTimeMill = dateConvertToLongTime
+//        val alarmBundle  = Bundle()
+//        alarmBundle.putLong(longBundle, dateConvertToLongTime)
+        Log.d("longBundle", "$dateConvertToLongTime")
+        Log.d("calender", "${calendar.timeInMillis}")
+        //setAlarm(calendar)
         detailViewModel.setDateCalenderValue(date)
     }
 
@@ -274,5 +291,4 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     }
 
 }
-
 
