@@ -25,21 +25,12 @@ import java.util.*
 class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     DatePickerDialog.OnDateSetListener {
     private val args by navArgs<DetailFragmentArgs>()
-    private var notificationOnOrOff = false
-     val longBundle : String = "longBundle"
-    private var c: Calendar = Calendar.getInstance()
     private var _binding: FragmentDetailBinding? = null
     private val binding
         get() = _binding!!
-
-    var calenderTimeMill : Long = 0
-
-    // private var input: SimpleDateFormat = SimpleDateFormat("MM/dd/yy", Locale.US)
     private val now: Calendar = Calendar.getInstance()
     private val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
     private var dateFormatter = SimpleDateFormat("EEE MMM dd, yyyy", Locale.US)
-    private lateinit var notificationManager: NotificationManager
-
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var detailArgs: DetailFragmentArgs
     private lateinit var textViewCalender: TextView
@@ -56,18 +47,9 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         observeTimePicker()
         textViewCalender = binding.tvCalender
         timePicker = binding.tvTimePicker
-        textViewCalender.setOnClickListener {
-            // DatePickerFragment().show(childFragmentManager, "Date Picker")
+        binding.dateAndTimeSelector.setOnClickListener{
             showDialog()
         }
-        timePicker.setOnClickListener {
-//            TimePickerFragment().show(childFragmentManager, "Time Picker")
-            showTimePicker()
-        }
-//        binding.btnNotificationStatus.setOnCheckedChangeListener { view, ischeck ->
-//            updateNotificationStatus(ischeck)
-//        }
-
 
         return binding.root
     }
@@ -91,7 +73,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         val title = edtTaskName.text.toString()
         when (item.itemId) {
             R.id.add_item -> {
-                saveTodoItem()
+                createOrUpdateTodoItem()
                 hideVirtualKeyboard()
                 return true
             }
@@ -99,7 +81,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         return super.onOptionsItemSelected(item)
     }
 
-    private fun saveTodoItem() {
+    private fun createOrUpdateTodoItem() {
+        // Update todoItem
         if (arguments != null) {
             val name = binding.edtTaskName.text.toString()
             val dueDate = textViewCalender.text.toString()
@@ -112,6 +95,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Toast.makeText(requireContext(), "Item is updated", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
             } else {
+                // create new todoItem
+                binding.dateAndTimeSelector.text = "Update alarm"
                 val taskName = binding.edtTaskName.text.toString()
                 val due = textViewCalender.text.toString()
                 val time = timePicker.text.toString()
@@ -145,22 +130,18 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         }
     }
 
-    companion object {
-        val cal: Calendar = Calendar.getInstance()
-        val request_ID = 0
-
-    }
-
     private fun setAlarm(calendar: Calendar) {
         val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
 //        val longBundle : Long = Bundle().getLong(longBundle)
-          var timeInMill = calendar.timeInMillis
-
-        detailViewModel.dateInMill.observe(viewLifecycleOwner, androidx.lifecycle.Observer {longDate ->
-           timeInMill += longDate
-            Log.d("long_date", "$longDate")
+        var timeInMill = calendar.timeInMillis
+        var lonDate: Long = 0
+        /// observes date changed(long) and updates it to chosen value.
+        detailViewModel.dateInMill.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            lonDate = it
+            Log.d("long_date", "$it")
         })
+        timeInMill += lonDate
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), 1, intent, 0)
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMill, pendingIntent)
         Log.i("cal_alrm", "${calendar.timeInMillis}")
@@ -193,7 +174,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         })
 
     }
-
 
     private fun hideVirtualKeyboard() {
         try {
@@ -242,20 +222,12 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         val date = dateFormatter.format(calendar.time)
-        val alarm_cal = calendar.timeInMillis
-        var dateConvertToLongTime = calendar.timeInMillis
-//        if(DateUtils.isToday(dateConvertToLongTime)){
-//            dateConvertToLongTime  = 0
-//        }
-//
-//        calenderTimeMill = dateConvertToLongTime
-        detailViewModel.setLongDateValue(dateConvertToLongTime)
-//        val alarmBundle  = Bundle()
-//        alarmBundle.putLong(longBundle, dateConvertToLongTime)
-        Log.d("longBundle", "$dateConvertToLongTime")
+        detailViewModel.setLongDateValue(calendar.timeInMillis)
+        Log.d("longBundle", "${calendar.timeInMillis}")
         Log.d("calender", "${calendar.timeInMillis}")
-        //setAlarm(calendar)
         detailViewModel.setDateCalenderValue(date)
+
+        showTimePicker()
     }
 
     private fun showTimePicker() {
@@ -288,7 +260,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         calendar.set(Calendar.MINUTE, minute)
         calendar.set(Calendar.SECOND, 0)
         val time: String = timeFormat.format(calendar.time)
-        //val timeTextView: String = time.toString()
         detailViewModel.setTimePickerValue(time)
         setAlarm(calendar)
         Log.i("calender_alarm", "alarm is set: ${calendar.time}")
