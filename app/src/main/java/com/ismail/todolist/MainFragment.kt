@@ -55,7 +55,6 @@ class MainFragment : Fragment(), AdapterCallBack {
             R.id.delete_all_items -> {
                 deleteAllItemDiolag()
                 cancelAlarm()
-                Toast.makeText(requireContext(), "All tasks have beeng deleted", Toast.LENGTH_SHORT).show()
                 return true
             }
         }
@@ -171,6 +170,8 @@ class MainFragment : Fragment(), AdapterCallBack {
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 todoViewModel.deleteAllItems()
+                Toast.makeText(requireContext(), "All tasks have beeng deleted", Toast.LENGTH_SHORT).show()
+
             }
             .setNegativeButton("Cancel") { dialog, id ->
                 dialog.cancel()

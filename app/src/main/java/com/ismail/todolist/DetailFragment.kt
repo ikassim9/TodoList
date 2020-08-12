@@ -96,7 +96,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
             } else {
                 // create new todoItem
-                binding.dateAndTimeSelector.text = "Update alarm"
                 val taskName = binding.edtTaskName.text.toString()
                 val due = textViewCalender.text.toString()
                 val time = timePicker.text.toString()
@@ -127,6 +126,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             binding.edtTaskName.setText(detailArgs.item?.title)
             textViewCalender.text = detailArgs.item?.dueDate
             timePicker.text = detailArgs.item?.dueTime
+
+
         }
     }
 

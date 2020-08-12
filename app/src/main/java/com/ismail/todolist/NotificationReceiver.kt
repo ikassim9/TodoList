@@ -11,9 +11,9 @@ class NotificationReceiver : BroadcastReceiver() {
             "NotificationReceiver",
             "Broadcast received."
         )
+        val uniqueID = (System.currentTimeMillis().toInt())
         val alarmManagerHelper = AlarmManagerHelper(context)
         val builder = alarmManagerHelper.retrieveNotificationBuilder().build()
-        alarmManagerHelper.getManager().notify(1, builder)
-
+        alarmManagerHelper.getManager().notify(uniqueID, builder)
     }
 }
