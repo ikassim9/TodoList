@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<item
-    android:id="@+id/delete_all_items"
-    android:title="Delete All Items"
-    app:showAsAction="never"/>
 
     <item android:id="@+id/search_filter"
         android:title="Search"
-        app:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:icon="@drawable/ic_search_filter"/>
+<item
+    android:id="@+id/delete_all_items"
+    android:title="Delete All Items"
+    app:showAsAction="ifRoom"
+    android:icon="@drawable/ic_delete_all"
+    />
+
+
 
 
 </menu>
