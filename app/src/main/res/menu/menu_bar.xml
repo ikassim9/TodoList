@@ -6,5 +6,10 @@
     android:title="Delete All Items"
     app:showAsAction="never"/>
 
+    <item android:id="@+id/search_filter"
+        android:title="Search"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_search_filter"/>
+
 
 </menu>
