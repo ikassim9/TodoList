@@ -1,4 +1,4 @@
-# This is a todolist app for managing your tasks. You can add todos and set up notification for when it is due. There are also additional features such as undo option and the ability to filter your tasks. More cool features are on the way. Stay tune!
+### This is a todolist app for managing your tasks. You can add todos and set up notification for when it is due. There are also additional features such as undo option and the ability to filter your tasks. More cool features are on the way. Stay tune!
 
 # Listview of your todos
 <img src="images/seeTasks.png" width="250">
